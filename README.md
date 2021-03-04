@@ -6,10 +6,10 @@ For more information, see gallia-core [documentation](https://github.com/galliap
 
 <a name="description"></a>
 ### Description
-Uses _Gallia_ [transformations](https://github.com/galliaproject/gallia-snpeff/blob/init/src/main/scala/galliaexample/genemania/GeneMania.scala#L50) to turn TSV data from <http://genemania.org/data/current/Homo_sapiens/> into objects like:
+Uses _Gallia_ [transformations](https://github.com/galliaproject/gallia-genemania/blob/init/src/main/scala/galliaexample/genemania/GeneMania.scala#L50) to turn TSV data from <http://genemania.org/data/current/Homo_sapiens/> into objects like:
 
 <a name="output"></a>
-```json
+```
 {
   "_id": "ENSG00000123456",
 
