@@ -1,0 +1,341 @@
+{
+  "fields": [
+    {
+      "key": "_id",
+      "info": {
+        "container": "_One",
+        "containee": "_String"
+      }
+    },
+    {
+      "key": "predicted",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "pathway",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "co_localization",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "genetic_interactions",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "physical_interactions",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "shared_protein_domains",
+      "info": {
+        "container": "_Pes",
+        "containee": {
+          "fields": [
+            {
+              "key": "target",
+              "info": {
+                "container": "_One",
+                "containee": "_String"
+              }
+            },
+            {
+              "key": "context",
+              "info": {
+                "container": "_Nes",
+                "containee": {
+                  "fields": [
+                    {
+                      "key": "network",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "source",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "pubmed",
+                      "info": {
+                        "container": "_Opt",
+                        "containee": "_String"
+                      }
+                    },
+                    {
+                      "key": "weight",
+                      "info": {
+                        "container": "_One",
+                        "containee": "_Double"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
