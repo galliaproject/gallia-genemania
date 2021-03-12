@@ -29,6 +29,9 @@ Uses _Gallia_ [transformations](https://github.com/galliaproject/gallia-genemani
 }
 ```
 
+Note that the processing makes use of Gallia's ["poor man scaling"](https://github.com/galliaproject/gallia-core/blob/init/README.md#poor-man-scaling),
+which can be seen in action here in the [processing code](https://github.com/galliaproject/gallia-genemania/blob/init/src/main/scala/galliaexample/genemania/GeneMania.scala#L95).
+
 <a name="references"></a>
 ### GeneMania References
 - __website__: https://genemania.org/
