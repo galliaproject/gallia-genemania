@@ -1,71 +1,51 @@
 package galliaexample.genemania
 
-import scala.util.chaining._ // for .pipe
-import aptus._ // for timing
+import aptus._
 import gallia._
 
 // ===========================================================================
-object GeneMania {
-
-  val Parent =
-    //"http://genemania.org/data/current/Homo_sapiens"
-    "/data/genemania/individuals" // local copies to avoid hammering the server
-
-  // ---------------------------------------------------------------------------
-  val Compression =
-    //""  // not compression on server
-    ".gz" // compressed locally to save space
-
-  // ---------------------------------------------------------------------------
-  /*
-    excerpt:
-      File_Name                              Network_Group_Name  Network_Name             Source  Pubmed_ID
-      Predicted.I2D-BIND-Fly2Human.txt       Predicted           I2D-BIND-Fly2Human       I2D     10871269
-      Predicted.I2D-BIND-Mouse2Human.txt     Predicted           I2D-BIND-Mouse2Human     I2D     10871269
-      Predicted.I2D-BIND-Rat2Human.txt       Predicted           I2D-BIND-Rat2Human       I2D     10871269
-      ...
-  */
-  val Networks = s"${Parent}/networks.txt${Compression}"
+class GeneMania(
+    inputDirPath: String, inputCompression: String, maxFiles: Option[Int] = None /* None is all */,
+    outputPath  : String) {
+  import SparkDagTooBigWorkaround.Implicits
 
   // ===========================================================================
-  def main(args: Array[String]): Unit = {
+  // just a trick to simplify reusing code in the spark-version, could all be inlined for non-spark run
 
-   /*
-    //Hacks.IteratorParGroupSize = Some(50) // number depends a lot on #cpus/RAM
-      Hacks.DisableRuntimeChecks = true
-      Hacks.LoseOrderOnGrouping  = true
-    */
+  var weightInputReader : String => HeadS = path => path.stream(_.tsv.iteratorMode.schema("Gene_A".string, "Gene_B".string, "Weight".double))
+  var networkInputReader: String => HeadS = path => path.stream(_.tsv             .schema("File_Name".string, "Network_Group_Name".string, "Network_Name".string, "Source".string, "Pubmed_ID".string))  
+  
+  var outputWriter: String => HeadS => Unit = path => x => { x.write(path); () }
+  
+  var checkpointingHook: HeadS => HeadS = identity // don't checkpoint for non-spark run
+  var coalescingHook   : HeadS => HeadS = identity // don't coalesce   for non-spark run  
 
-    // ---------------------------------------------------------------------------
-    ().time.seconds {
-      apply(maxOpt = Some(1000 /* out of ~382M */)) // to test a smaller subset
-    //apply()
-    }
-
-    ()
-  }
-
-  // ---------------------------------------------------------------------------
-  def apply(maxOpt: Option[Int] = None) = {
+  // ===========================================================================
+  def apply() = {
     union()
-        .take(maxOpt) // out of ~382M
         .logProgress(/* every */ 100000 /* row */,   "incoming")
-          .pipe(restructure)
+          .thn(restructure)
         .logProgress(/* every */    100 /* genes */, "outgoing")
-      .write("/tmp/genemania.jsonl.gz")
+      .thn(coalescingHook)
+      .thn(outputWriter(outputPath))
   }
 
   // ===========================================================================
   def union(): HeadS =
-    networks()
-      .forceStrings("File_Name")
-      .filterNot(_ == "Co-expression.Honda-Kaneko-2010.txt") // empty (not even a header)
-      .map { fileName =>
+    fileNames()
+      .mapWithCheckpointingGroups(maxFiles)(checkpointingHook) { fileName => // vs a simple ".map { fileName =>" if not using spark
         weights(fileName)
           .union {
         // confirmed all interactions are symetrical (see https://groups.google.com/g/genemania-discuss/c/Go4oXNHEhoQ)
         weights(fileName).swapEntries("Gene_A", "Gene_B") } }
       .reduceLeft(_ union _)
+
+    // ---------------------------------------------------------------------------
+    def fileNames(): Seq[FileName] =
+        networks()
+          .forceStrings("File_Name")
+          .filterNot(_ == "Co-expression.Honda-Kaneko-2010.txt") // empty (not even a header)
+          .thnOpt(maxFiles)(n => _.take(n))
 
     // ---------------------------------------------------------------------------
     /*
@@ -77,8 +57,8 @@ object GeneMania {
         ...
     */
     def weights(fileName: String): HeadS =
-      s"${Parent}/${fileName}${Compression}"
-        .stream(_.tsv.iteratorMode.schema("Gene_A".string, "Gene_B".string, "Weight".double))
+      s"${inputDirPath}/${fileName}${inputCompression}"
+        .thn(weightInputReader)
           .add("File_Name" -> fileName) // will be join key
 
   // ===========================================================================
@@ -89,7 +69,7 @@ object GeneMania {
              "Gene_B" ~> "target",
              "Weight" ~> "weight")
 
-       .innerJoin(networks()) // will use hash join since networks() is in-memory
+       .innerJoin(networks().asViewBased) // will use hash join since right-hand side not distributed (view-based); alse see t210322111234
          .remove("File_Name") // not needed after the join (redundant)
 
        .groupBy(_id).as("interactions") // will leverage GNU sort since .iteratorMode (see https://github.com/galliaproject/gallia-core#poor-mans-scaling-spilling)
@@ -113,9 +93,17 @@ object GeneMania {
          .unnestAllFrom("interactions")
 
   // ===========================================================================
+  /*
+    excerpt:
+      File_Name                              Network_Group_Name  Network_Name             Source  Pubmed_ID
+      Predicted.I2D-BIND-Fly2Human.txt       Predicted           I2D-BIND-Fly2Human       I2D     10871269
+      Predicted.I2D-BIND-Mouse2Human.txt     Predicted           I2D-BIND-Mouse2Human     I2D     10871269
+      Predicted.I2D-BIND-Rat2Human.txt       Predicted           I2D-BIND-Rat2Human       I2D     10871269
+      ...
+  */   
   def networks(): HeadS =
-    Networks
-      .stream(_.tsv)
+    s"${inputDirPath}/networks.txt${inputCompression}"
+      .thn(networkInputReader)
         .rename(
           "Network_Group_Name" ~> "interaction",
           "Network_Name"       ~> "network",
