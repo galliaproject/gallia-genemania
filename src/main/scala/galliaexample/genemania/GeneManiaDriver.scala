@@ -7,7 +7,7 @@ object GeneManiaDriver {
 
   val Parent =
     //"http://genemania.org/data/current/Homo_sapiens"
-    "/data/genemania/individuals" // local copies to avoid hammering the server
+    "/data/genemania/weights" // local copies to avoid hammering the server
 
   // ---------------------------------------------------------------------------
   val Compression =
