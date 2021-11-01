@@ -6,7 +6,7 @@ lazy val root = (project in file("."))
     organizationName     := "Gallia Project",
     organization         := "io.github.galliaproject", // *must* match groupId for sonatype
     name                 := "gallia-genemania",
-    version              := "0.3.0",    
+    version              := "0.3.1",    
     homepage             := Some(url("https://github.com/galliaproject/gallia-genemania")),
     scmInfo              := Some(ScmInfo(
         browseUrl  = url("https://github.com/galliaproject/gallia-genemania"),
@@ -16,7 +16,7 @@ lazy val root = (project in file("."))
   .settings(GalliaCommonSettings.mainSettings:_*)
 
 // ===========================================================================    
-lazy val galliaVersion = "0.3.0"
+lazy val galliaVersion = "0.3.1"
 
 // ---------------------------------------------------------------------------
 libraryDependencies += "io.github.galliaproject" %% "gallia-core" % galliaVersion // in turns depends on aptus-core
