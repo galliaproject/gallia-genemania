@@ -1,5 +1,6 @@
 package galliaexample.genemania
 
+import scala.util.chaining._
 import aptus._
 import gallia._
 
@@ -39,7 +40,7 @@ object SparkDagTooBigWorkaround {
         groupedFileNames
           .map(f)
           .reduceLeft(_ union _)
-          .thn(checkpointingHook) // checkpointing not in Gallia yet, see https://github.com/galliaproject/gallia-docs/blob/master/tasks.md#t210121160956
+          .pipe(checkpointingHook) // checkpointing not in Gallia yet, see https://github.com/galliaproject/gallia-docs/blob/master/tasks.md#t210121160956
     
   // ===========================================================================
   private def groupSizeOpt(max: Int): Option[Int] =

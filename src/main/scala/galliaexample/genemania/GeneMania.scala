@@ -1,5 +1,6 @@
 package galliaexample.genemania
 
+import scala.util.chaining._
 import aptus._
 import gallia._
 
@@ -24,10 +25,10 @@ class GeneMania(
   def apply() = {
     union()
         .logProgress(/* every */ 100000 /* row */,   "incoming")
-          .thn(restructure)
+          .pipe(restructure)
         .logProgress(/* every */    100 /* genes */, "outgoing")
-      .thn(coalescingHook)
-      .thn(outputWriter(outputPath))
+      .pipe(coalescingHook)
+      .pipe(outputWriter(outputPath))
   }
 
   // ===========================================================================
@@ -45,7 +46,8 @@ class GeneMania(
         networks()
           .forceStrings("File_Name")
           .filterNot(_ == "Co-expression.Honda-Kaneko-2010.txt") // empty (not even a header)
-          .thnOpt(maxFiles)(n => _.take(n))
+          .pipeOpt(maxFiles)(n => _.take(n))
+          .sorted
 
     // ---------------------------------------------------------------------------
     /*
@@ -58,7 +60,7 @@ class GeneMania(
     */
     def weights(fileName: String): HeadS =
       s"${inputDirPath}/${fileName}${inputCompression}"
-        .thn(weightInputReader)
+        .pipe(weightInputReader)
           .add("File_Name" -> fileName) // will be join key
 
   // ===========================================================================
@@ -69,15 +71,15 @@ class GeneMania(
              "Gene_B" ~> "target",
              "Weight" ~> "weight")
 
-       .innerJoin(networks().asViewBased) // will use hash join since right-hand side not distributed (view-based); alse see t210322111234
+       .innerJoin(networks().toViewBased) // will use hash join since right-hand side not distributed (view-based); alse see t210322111234
          .remove("File_Name") // not needed after the join (redundant)
 
        .groupBy(_id).as("interactions") // will leverage GNU sort since .iteratorMode (see https://github.com/galliaproject/gallia-core#poor-mans-scaling-spilling)
 
-       .transformObjects("interactions").using {
+       .transformAllEntities("interactions").using {
          _ .nest("network", "source", "pubmed", "weight").under("context")
            .group("context").by("interaction", "target")
-           .transformObjects("context").using {
+           .transformAllEntities("context").using {
                // eg for ENSG00000006451 -> predicted -> ENSG00000116903 (0.71, then 0.12)
                _.sortByDescending("weight") }
            .nest("target", "context").under(_tmp)
@@ -103,7 +105,7 @@ class GeneMania(
   */   
   def networks(): HeadS =
     s"${inputDirPath}/networks.txt${inputCompression}"
-      .thn(networkInputReader)
+      .pipe(networkInputReader)
         .rename(
           "Network_Group_Name" ~> "interaction",
           "Network_Name"       ~> "network",

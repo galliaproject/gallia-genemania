@@ -17,9 +17,9 @@ object GeneManiaDriver {
   // ===========================================================================
   @annotation.nowarn def main(args: Array[String]): Unit = {
    /*
-    //Hacks.IteratorParGroupSize = Some(50) // number depends a lot on #cpus/RAM
-      Hacks.DisableRuntimeChecks = true
-      Hacks.LoseOrderOnGrouping  = true
+    //gallia.Hacks.iteratorParGroupSize.setValue(50) // number depends a lot on #cpus/RAM
+      gallia.Hacks.disableRuntimeChecks.setToTrue()
+      gallia.Hacks.loseOrderOnGrouping .setToTrue()
     */
 
     // ---------------------------------------------------------------------------
